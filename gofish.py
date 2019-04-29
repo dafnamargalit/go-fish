@@ -1,3 +1,5 @@
+# Dafna Margalit ECEN 2703 
+#Code modified from https://rosettacode.org/wiki/Go_Fish/Python 
 import itertools
 import random
 from copy import deepcopy
@@ -24,9 +26,9 @@ SUITS_COUNT = 4
 RANKS = ('2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A')
 DECK = RANKS * SUITS_COUNT
  
-EMPTY_HAND_MESSAGE = "{} is without cards. They go fishing."
+EMPTY_HAND_MESSAGE = "{} has run out of cards. They go fishing."
 CARD_REQUEST_MESSAGE = "{player_name} asks for {card}"
-NO_CARD_MESSAGE = "{player_name} doesn't have {card}"
+NO_CARD_MESSAGE = "{player_name} doesn't have {card}. Go Fish!"
 BOOK_COMPLETED_MESSAGE = "{player_name} completed the book of {card}'s."
 FISHING_RESULT_MESSAGE = "{player_name} fished a {card}"
 difficulty = False
@@ -37,7 +39,7 @@ class Player(NamedTuple):
     is_human: bool
     score: int = 0
     watchlist: Watchlist = set()  # used by AI to track enemy's cards
-    repeat: Repeat = set() #also used by AI
+    repeat: Repeat = set() #also used by AI to track how many times a card repeats
  
  
 def play(deck: Deck = DECK,
@@ -48,7 +50,7 @@ def play(deck: Deck = DECK,
     #create hands
     deck, (human_hand, ai_hand) = deal_first_hands(deck, count=first_hand_count)
     # choose player name and deal first hands to AI and human
-    human = Player(name=input('Name yourself: '),
+    human = Player(name=input('What is your name?: '),
                    hand=human_hand,
                    is_human=True)
     ai = Player(name='Computer',
@@ -56,17 +58,7 @@ def play(deck: Deck = DECK,
                 is_human=False)
     human = check_hand_for_books(human)
     ai = check_hand_for_books(ai)
-
-    level = input('Choose difficulty (easy or hard):')
-
-    if level == 'easy':
-        difficulty = False
-    elif level == 'hard':
-        difficulty = True
-    else:
-        print("Error! You can only input 'easy' or 'hard'")
-        level = input('Choose difficulty (easy or hard):')
-    
+    choose_level()
     player, opponent = ai, human
     for turn in itertools.count(1):
         player, opponent = opponent, player
@@ -84,6 +76,17 @@ def play(deck: Deck = DECK,
             return
  
  
+def choose_level():
+    level = input('Choose difficulty (easy or hard):')
+
+    if level == 'easy':
+        difficulty = False
+    elif level == 'hard':
+        difficulty = True
+    else:
+        print("Error! You can only input 'easy' or 'hard'")
+        choose_level()
+        
 def shuffle(deck: Deck) -> Deck:
     """Returns a shuffled deck"""
     deck = list(deck)
@@ -383,3 +386,6 @@ def print_fishing_result(*,
 if __name__ == "__main__":
     play()
  
+
+
+
